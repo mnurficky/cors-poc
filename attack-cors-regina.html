@@ -24,7 +24,7 @@
              // Remove any quotes around the token
                 const cleanedToken = authToken.replace(/^"|"$/g, ''); // Remove leading/trailing quotes if they exist
 
-            fetch("https://corereginaam.tokomodal.id/api/v1/app/obas", {
+            fetch("https://corereginaam.tokomodal.co.id/api/v1/app/obas", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${cleanedToken}` // Use cleaned token value
